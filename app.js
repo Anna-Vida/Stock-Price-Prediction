@@ -49,10 +49,11 @@ async function saveCloudFavorite(ticker, isFavorite) {
 
 function updateAuthUI() {
   const button = $('#authButton');
-  button.textContent = authSession ? `Hi, ${authSession.name || authSession.email.split('@')[0]}` : 'Sign in';
+  const displayName = authSession?.name || 'Investor';
+  button.textContent = authSession ? `Hi, ${displayName}` : 'Sign in';
   button.classList.toggle('signed-in', Boolean(authSession));
   const profileName = document.querySelector('.profile strong');
-  if (profileName && authSession) profileName.textContent = authSession.name || authSession.email.split('@')[0];
+  if (profileName) profileName.textContent = authSession ? displayName : 'Alex Smith';
 }
 
 function setAuthMode(mode) {
@@ -306,7 +307,7 @@ $('#authButton').addEventListener('click', openAuth);
 $('#authClose').addEventListener('click', () => { $('#authBackdrop').hidden = true; });
 $('#authBackdrop').addEventListener('click', (event) => { if (event.target === $('#authBackdrop')) $('#authBackdrop').hidden = true; });
 document.querySelectorAll('.auth-tab').forEach((tab) => tab.addEventListener('click', () => setAuthMode(tab.dataset.authMode)));
-$('#authForm').addEventListener('submit', async (event) => { event.preventDefault(); const email = $('#authEmail').value.trim(); const password = $('#authPassword').value; const register = document.querySelector('.auth-tab.active').dataset.authMode === 'register'; if (password.length < 6) { $('#authError').textContent = 'Use a password with at least 6 characters.'; return; } if (register && !$('#authName').value.trim()) { $('#authError').textContent = 'Add a display name to continue.'; return; } if (supabaseClient) { const result = register ? await supabaseClient.auth.signUp({ email, password, options: { data: { display_name: $('#authName').value.trim() } } }) : await supabaseClient.auth.signInWithPassword({ email, password }); if (result.error) { $('#authError').textContent = result.error.message; return; } authSession = { id: result.data.user?.id, email, name: result.data.user?.user_metadata?.display_name || email.split('@')[0] }; await loadCloudData(); } else { authSession = { email, name: register ? $('#authName').value.trim() : email.split('@')[0] }; } localStorage.setItem('predictSession', JSON.stringify(authSession)); updateAuthUI(); $('#authBackdrop').hidden = true; $('#authForm').reset(); setAuthMode('signin'); showToast(register ? 'Account created' : 'Signed in successfully'); });
+$('#authForm').addEventListener('submit', async (event) => { event.preventDefault(); const email = $('#authEmail').value.trim(); const password = $('#authPassword').value; const username = $('#authName').value.trim(); const register = document.querySelector('.auth-tab.active').dataset.authMode === 'register'; if (password.length < 6) { $('#authError').textContent = 'Use a password with at least 6 characters.'; return; } if (register && !username) { $('#authError').textContent = 'Choose a username to continue.'; return; } if (supabaseClient) { const result = register ? await supabaseClient.auth.signUp({ email, password, options: { data: { username } } }) : await supabaseClient.auth.signInWithPassword({ email, password }); if (result.error) { $('#authError').textContent = result.error.message; return; } authSession = { id: result.data.user?.id, email, name: result.data.user?.user_metadata?.username || email.split('@')[0] }; await loadCloudData(); } else { authSession = { email, name: register ? username : email.split('@')[0] }; } localStorage.setItem('predictSession', JSON.stringify(authSession)); updateAuthUI(); $('#authBackdrop').hidden = true; $('#authForm').reset(); setAuthMode('signin'); showToast(register ? 'Account created' : 'Signed in successfully'); });
 $('#viewWatchlistButton').addEventListener('click', () => { document.querySelector('[data-view="Watchlist"]').click(); document.querySelector('.watchlist-panel').scrollIntoView({ behavior: 'smooth', block: 'center' }); showToast('Watchlist opened'); });
 $('#exportButton').addEventListener('click', () => { const report = `Stock Prediction Report\n${stockData[currentTicker].name} (${currentTicker})\nCurrent price: $${stockData[currentTicker].price}\n7-day forecast: $${stockData[currentTicker].forecast}`; const blob = new Blob([report], { type: 'text/plain' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `${currentTicker}-prediction-report.txt`; link.click(); URL.revokeObjectURL(link.href); showToast(`${currentTicker} report downloaded`); });
 renderWatchlist();
@@ -319,7 +320,7 @@ marketRefreshTimer = window.setInterval(refreshMarketData, 60000);
 if (supabaseClient) {
   supabaseClient.auth.getSession().then(async ({ data }) => {
     if (!data.session?.user) return;
-    authSession = { id: data.session.user.id, email: data.session.user.email, name: data.session.user.user_metadata?.display_name || data.session.user.email.split('@')[0] };
+    authSession = { id: data.session.user.id, email: data.session.user.email, name: data.session.user.user_metadata?.username || data.session.user.email.split('@')[0] };
     localStorage.setItem('predictSession', JSON.stringify(authSession)); updateAuthUI(); await loadCloudData();
   });
   supabaseClient.auth.onAuthStateChange((_event, session) => {
