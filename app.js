@@ -35,6 +35,9 @@ const hasCloudBackend = Boolean(supabaseClient);
 function updateMarketDate() {
   const today = new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).format(new Date());
   $('#marketDate').textContent = today.toUpperCase();
+  $('#detailStatus').textContent = 'Live quote feed';
+  const detailFeed = $('.detail-chart .panel-heading p');
+  if (detailFeed) detailFeed.innerHTML = '<span class="live-dot"></span>Live quote · refreshes every minute';
 }
 
 async function loadCloudData() {
@@ -224,7 +227,7 @@ function openStockDetail(ticker) {
   $('#detailSignal').textContent = data.note; $('#detailMomentum').textContent = data.signal === 'BULLISH' ? 'Strong' : 'Mixed'; $('#detailRisk').textContent = data.confidence > 80 ? 'Low' : 'Medium';
   $('#targetPrice').value = savedDetails[ticker]?.target || ''; $('#alertPrice').value = savedDetails[ticker]?.alert || ''; $('#reviewNote').value = savedDetails[ticker]?.note || '';
   const favorite = savedFavorites.has(ticker); $('#detailFavorite').textContent = favorite ? '★ Saved to Watchlist' : '☆ Add to Watchlist'; $('#detailFavorite').classList.toggle('saved', favorite);
-  drawDetailChart(data); detailTimer = window.setInterval(() => updateLiveDetail(data), 2600); window.scrollTo({ top: 0, behavior: 'smooth' });
+  drawDetailChart(data); window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function closeStockDetail() {
@@ -232,13 +235,12 @@ function closeStockDetail() {
 }
 
 function updateLiveDetail(data) {
-  const movement = (Math.random() - 0.46) * data.price * 0.0025;
-  livePrice = Math.max(data.price * 0.94, livePrice + movement);
+  livePrice = data.price;
   const tickPercent = ((livePrice / data.price - 1) * 100).toFixed(2);
   $('#detailPrice').textContent = formatMoney(livePrice);
   $('#detailTick').textContent = `${tickPercent >= 0 ? '+' : ''}${tickPercent}%`;
   $('#detailTick').className = tickPercent >= 0 ? 'positive' : 'negative';
-  $('#detailStatus').textContent = 'Market simulation live';
+  $('#detailStatus').textContent = 'Live quote feed';
   drawDetailChart(data);
 }
 
