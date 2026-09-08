@@ -4,6 +4,8 @@ A real-time stock market prediction and portfolio tracking application with live
 
 **Created by**: Anna Vida
 
+**Live app**: [stock-price-prediction-cqad.onrender.com](https://stock-price-prediction-cqad.onrender.com/)
+
 ## Features
 
 - **Live Market Data**: Real-time stock prices fetched from Yahoo Finance API
