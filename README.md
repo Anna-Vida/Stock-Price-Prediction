@@ -2,6 +2,8 @@
 
 A real-time stock market prediction and portfolio tracking application with live market data, user authentication, and cloud storage.
 
+**Created by**: Anna Vida
+
 ## Features
 
 - **Live Market Data**: Real-time stock prices fetched from Yahoo Finance API
