@@ -32,6 +32,11 @@ const $ = (selector) => document.querySelector(selector);
 const supabaseClient = window.supabaseClient || null;
 const hasCloudBackend = Boolean(supabaseClient);
 
+function updateMarketDate() {
+  const today = new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).format(new Date());
+  $('#marketDate').textContent = today.toUpperCase();
+}
+
 async function loadCloudData() {
   if (!supabaseClient || !authSession?.id) return;
   const { data: favorites } = await supabaseClient.from('favorites').select('symbol').eq('user_id', authSession.id);
@@ -310,6 +315,7 @@ document.querySelectorAll('.auth-tab').forEach((tab) => tab.addEventListener('cl
 $('#authForm').addEventListener('submit', async (event) => { event.preventDefault(); const email = $('#authEmail').value.trim(); const password = $('#authPassword').value; const username = $('#authName').value.trim(); const register = document.querySelector('.auth-tab.active').dataset.authMode === 'register'; if (password.length < 6) { $('#authError').textContent = 'Use a password with at least 6 characters.'; return; } if (register && !username) { $('#authError').textContent = 'Choose a username to continue.'; return; } if (supabaseClient) { const result = register ? await supabaseClient.auth.signUp({ email, password, options: { data: { username } } }) : await supabaseClient.auth.signInWithPassword({ email, password }); if (result.error) { $('#authError').textContent = result.error.message; return; } authSession = { id: result.data.user?.id, email, name: result.data.user?.user_metadata?.username || email.split('@')[0] }; await loadCloudData(); } else { authSession = { email, name: register ? username : email.split('@')[0] }; } localStorage.setItem('predictSession', JSON.stringify(authSession)); updateAuthUI(); $('#authBackdrop').hidden = true; $('#authForm').reset(); setAuthMode('signin'); showToast(register ? 'Account created' : 'Signed in successfully'); });
 $('#viewWatchlistButton').addEventListener('click', () => { document.querySelector('[data-view="Watchlist"]').click(); document.querySelector('.watchlist-panel').scrollIntoView({ behavior: 'smooth', block: 'center' }); showToast('Watchlist opened'); });
 $('#exportButton').addEventListener('click', () => { const report = `Stock Prediction Report\n${stockData[currentTicker].name} (${currentTicker})\nCurrent price: $${stockData[currentTicker].price}\n7-day forecast: $${stockData[currentTicker].forecast}`; const blob = new Blob([report], { type: 'text/plain' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `${currentTicker}-prediction-report.txt`; link.click(); URL.revokeObjectURL(link.href); showToast(`${currentTicker} report downloaded`); });
+updateMarketDate();
 renderWatchlist();
 renderMarketDirectory();
 updateAuthUI();
