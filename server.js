@@ -52,4 +52,5 @@ const server = http.createServer(async (request, response) => {
   fs.createReadStream(filePath).pipe(response);
 });
 
-server.listen(5500, () => console.log('Stock Price Prediction running at http://localhost:5500'));
+const port = Number(process.env.PORT) || 5500;
+server.listen(port, () => console.log(`Stock Price Prediction running at http://localhost:${port}`));

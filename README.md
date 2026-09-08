@@ -118,6 +118,7 @@ The **Overview** shows:
 ├── styles.css          # Dark theme styles
 ├── app.js              # Frontend logic
 ├── server.js           # Node.js backend server
+├── package.json        # Node.js start configuration
 ├── supabase-config.js  # Supabase connection
 ├── supabase-schema.sql # Database schema
 └── README.md           # This file
@@ -196,14 +197,26 @@ To modify the app:
 5. Test locally with `node server.js`
 6. Push changes to GitHub
 
-## Deployment
+## Deployment With Render
 
-To deploy to production:
+This project includes a Node.js server because it proxies live Yahoo Finance data. Render is a suitable host for the complete app.
 
-1. Use Vercel, Netlify, or a cloud server (AWS, Google Cloud, Heroku)
-2. Update the Supabase redirect URL to your domain
-3. Set environment variables for `SUPABASE_URL` and `SUPABASE_ANON_KEY`
-4. Run `node server.js` on your hosting platform
+1. Push the project to GitHub.
+2. Sign in at [render.com](https://render.com) and select **New → Web Service**.
+3. Connect the `Anna-Vida/Stock-Price-Prediction` repository.
+4. Use these settings:
+
+```text
+Environment: Node
+Build command: npm install
+Start command: npm start
+```
+
+5. Choose the free plan and click **Create Web Service**.
+6. After deployment, copy the Render URL and add it in Supabase under **Authentication → URL Configuration → Site URL**.
+7. Add the Render URL to **Redirect URLs** as well, then test sign-up and sign-in.
+
+The server automatically uses Render's `PORT` environment variable. No market-data API key is required for the current Yahoo Finance proxy.
 
 ## License
 
