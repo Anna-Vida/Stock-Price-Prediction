@@ -4,6 +4,7 @@
   "private": true,
   "description": "Real-time stock market prediction dashboard",
   "scripts": {
+    "dev": "python server.py",
     "start": "python server.py",
     "build:css": "tailwindcss -i ./src/input.css -o ./styles.css --minify",
     "watch:css": "tailwindcss -i ./src/input.css -o ./styles.css --watch",
