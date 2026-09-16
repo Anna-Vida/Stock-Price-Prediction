@@ -126,6 +126,19 @@ Only known public frontend assets are served. Source code, `.git`, and configura
 
 ## Deployment
 
+### Render
+
+Render is the recommended host for the complete application because it runs the Python API and serves the stock and crypto frontend from the same service.
+
+1. Sign in at [render.com](https://render.com/) with GitHub.
+2. Choose **New +** and **Blueprint**.
+3. Select `Anna-Vida/Stock-Price-Prediction`.
+4. Review the `render.yaml` service and choose the free plan.
+5. Click **Apply** and wait for the first deploy to finish.
+6. Open the generated `https://<service-name>.onrender.com` URL.
+
+Render redeploys the service automatically after future pushes to the repository's `main` branch. The free service may sleep after inactivity, so the first request after a quiet period can take longer.
+
 `render.yaml` configures a Python web service using `pip install -r requirements.txt`, `python server.py`, and `/api/health`. `HOST=0.0.0.0` enables the hosting platform to reach the service; `PORT` is read from the environment. Locally, the default binding is `127.0.0.1:5500`.
 
 Run `npm run build` and commit `styles.css` plus `public/crypto/dashboard.js` when changing frontend code before deployment. The Python deployment serves these prebuilt assets and does not need Node at runtime. The previous Node server has been replaced; an existing Render service must switch to a Python runtime or be recreated using the blueprint. Deployment is not performed by local setup.
