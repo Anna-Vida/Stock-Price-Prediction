@@ -1,337 +1,291 @@
-const stockData = {
-  NVDA: { name: 'NVIDIA Corporation', meta: 'NASDAQ: NVDA · Technology', icon: 'N', iconClass: 'nvda', price: 178.42, change: '+$4.86', percent: '(+2.80%)', forecast: 191.80, confidence: 87.4, signal: 'BULLISH', note: 'Strong upward momentum', color: '#74a3b6', seed: 12 },
-  AAPL: { name: 'Apple Inc.', meta: 'NASDAQ: AAPL · Technology', icon: 'A', iconClass: 'apple', price: 231.54, change: '+$3.24', percent: '(+1.42%)', forecast: 240.20, confidence: 79.2, signal: 'BULLISH', note: 'Steady accumulation', color: '#779bb0', seed: 23 },
-  MSFT: { name: 'Microsoft Corporation', meta: 'NASDAQ: MSFT · Technology', icon: 'M', iconClass: 'msft', price: 498.30, change: '+$4.35', percent: '(+0.88%)', forecast: 512.70, confidence: 82.1, signal: 'BULLISH', note: 'Cloud growth tailwind', color: '#749f8e', seed: 31 },
-  TSLA: { name: 'Tesla, Inc.', meta: 'NASDAQ: TSLA · Automotive', icon: 'T', iconClass: 'tesla', price: 342.11, change: '−$4.30', percent: '(−1.24%)', forecast: 356.40, confidence: 68.8, signal: 'NEUTRAL', note: 'Mixed momentum signals', color: '#d57e6d', seed: 44 },
-  AMZN: { name: 'Amazon.com, Inc.', meta: 'NASDAQ: AMZN · Consumer', icon: 'A', iconClass: 'amazon', price: 228.16, change: '+$2.91', percent: '(+1.29%)', forecast: 237.80, confidence: 81.6, signal: 'BULLISH', note: 'Retail momentum improving', color: '#d18c53', seed: 52 },
-  GOOGL: { name: 'Alphabet Inc.', meta: 'NASDAQ: GOOGL · Communication', icon: 'G', iconClass: 'google', price: 251.08, change: '+$3.62', percent: '(+1.46%)', forecast: 263.50, confidence: 84.7, signal: 'BULLISH', note: 'Search and cloud strength', color: '#7c9caf', seed: 61 },
-  META: { name: 'Meta Platforms, Inc.', meta: 'NASDAQ: META · Communication', icon: 'M', iconClass: 'meta', price: 736.22, change: '+$8.44', percent: '(+1.16%)', forecast: 768.90, confidence: 80.3, signal: 'BULLISH', note: 'Ad demand remains resilient', color: '#6689ad', seed: 73 },
-  AMD: { name: 'Advanced Micro Devices', meta: 'NASDAQ: AMD · Semiconductors', icon: 'A', iconClass: 'amd', price: 174.63, change: '−$1.95', percent: '(−1.10%)', forecast: 181.40, confidence: 72.5, signal: 'NEUTRAL', note: 'Awaiting next catalyst', color: '#8b7e91', seed: 86 },
-  NFLX: { name: 'Netflix, Inc.', meta: 'NASDAQ: NFLX · Entertainment', icon: 'N', iconClass: 'netflix', price: 1248.60, change: '+$16.25', percent: '(+1.32%)', forecast: 1299.40, confidence: 78.6, signal: 'BULLISH', note: 'Subscriber growth is accelerating', color: '#c85f5c', seed: 97 },
-  JPM: { name: 'JPMorgan Chase & Co.', meta: 'NYSE: JPM · Financials', icon: 'J', iconClass: 'jpm', price: 321.44, change: '+$2.18', percent: '(+0.68%)', forecast: 329.80, confidence: 75.4, signal: 'BULLISH', note: 'Banking strength remains steady', color: '#6e8da6', seed: 108 },
-  V: { name: 'Visa Inc.', meta: 'NYSE: V · Financials', icon: 'V', iconClass: 'visa', price: 352.78, change: '+$1.96', percent: '(+0.56%)', forecast: 364.20, confidence: 77.8, signal: 'BULLISH', note: 'Payments volume is resilient', color: '#7186b0', seed: 119 },
-  JNJ: { name: 'Johnson & Johnson', meta: 'NYSE: JNJ · Healthcare', icon: 'J', iconClass: 'jnj', price: 188.24, change: '−$0.74', percent: '(−0.39%)', forecast: 191.70, confidence: 70.9, signal: 'NEUTRAL', note: 'Defensive outlook with low volatility', color: '#789b98', seed: 130 },
-  XOM: { name: 'Exxon Mobil Corporation', meta: 'NYSE: XOM · Energy', icon: 'X', iconClass: 'xom', price: 119.86, change: '+$1.04', percent: '(+0.87%)', forecast: 124.60, confidence: 73.1, signal: 'BULLISH', note: 'Energy prices support momentum', color: '#9c875d', seed: 141 },
-  WMT: { name: 'Walmart Inc.', meta: 'NYSE: WMT · Consumer', icon: 'W', iconClass: 'wmt', price: 108.52, change: '+$0.82', percent: '(+0.76%)', forecast: 112.10, confidence: 76.2, signal: 'BULLISH', note: 'Consumer demand remains durable', color: '#6f9a9d', seed: 152 },
-  COIN: { name: 'Coinbase Global, Inc.', meta: 'NASDAQ: COIN · Digital assets', icon: 'C', iconClass: 'coin', price: 318.76, change: '−$6.42', percent: '(−1.97%)', forecast: 337.50, confidence: 64.8, signal: 'NEUTRAL', note: 'High volatility around crypto flows', color: '#628ab1', seed: 163 },
-  ORCL: { name: 'Oracle Corporation', meta: 'NYSE: ORCL · Enterprise software', icon: 'O', iconClass: 'oracle', price: 251.42, change: '+$2.74', percent: '(+1.10%)', forecast: 260.80, confidence: 74.6, signal: 'BULLISH', note: 'Cloud infrastructure demand is firm', color: '#b67568', seed: 174 },
-  CRM: { name: 'Salesforce, Inc.', meta: 'NYSE: CRM · Enterprise software', icon: 'S', iconClass: 'salesforce', price: 268.91, change: '+$1.62', percent: '(+0.61%)', forecast: 279.60, confidence: 73.8, signal: 'BULLISH', note: 'Recurring revenue remains healthy', color: '#6f9eb0', seed: 185 },
-  INTC: { name: 'Intel Corporation', meta: 'NASDAQ: INTC · Semiconductors', icon: 'I', iconClass: 'intel', price: 39.84, change: '−$0.48', percent: '(−1.19%)', forecast: 42.30, confidence: 62.4, signal: 'NEUTRAL', note: 'Turnaround execution remains uncertain', color: '#78869b', seed: 196 },
-  BAC: { name: 'Bank of America Corp.', meta: 'NYSE: BAC · Financials', icon: 'B', iconClass: 'bac', price: 48.72, change: '+$0.34', percent: '(+0.70%)', forecast: 50.10, confidence: 71.7, signal: 'BULLISH', note: 'Credit outlook is stable', color: '#607b9a', seed: 207 },
-  PFE: { name: 'Pfizer Inc.', meta: 'NYSE: PFE · Healthcare', icon: 'P', iconClass: 'pfe', price: 28.64, change: '−$0.21', percent: '(−0.73%)', forecast: 29.50, confidence: 67.9, signal: 'NEUTRAL', note: 'Pipeline catalysts remain mixed', color: '#789b91', seed: 218 }
-};
-let currentTicker = 'NVDA';
-let currentRange = '1W';
-let detailTimer;
-let livePrice = null;
-let marketRefreshTimer;
-const savedFavorites = new Set(JSON.parse(localStorage.getItem('stockFavorites') || '[]'));
-const savedDetails = JSON.parse(localStorage.getItem('stockDetails') || '{}');
-let authSession = JSON.parse(localStorage.getItem('predictSession') || 'null');
+'use strict';
 const $ = (selector) => document.querySelector(selector);
-const supabaseClient = window.supabaseClient || null;
-const hasCloudBackend = Boolean(supabaseClient);
-
-function updateMarketDate() {
-  const today = new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).format(new Date());
-  $('#marketDate').textContent = today.toUpperCase();
-  $('#detailStatus').textContent = 'Live quote feed';
-  const detailFeed = $('.detail-chart .panel-heading p');
-  if (detailFeed) detailFeed.innerHTML = '<span class="live-dot"></span>Live quote · refreshes every minute';
+const readLocal = (key, fallback) => { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } };
+const writeLocal = (key, value) => { try { localStorage.setItem(key, JSON.stringify(value)); return true; } catch { toast('Browser storage unavailable. Changes may not persist.'); return false; } };
+const state = { symbol: 'NVDA', view: 'overview', range: 66, demo: false, trajectoryTilt: 0, trajectoryBand: 100, quote: null, markets: [], user: null, favorites: [], notes: {}, pending: { favorites: {}, notes: {} }, request: 0, notesDirty: false };
+const cloud = window.supabaseClient;
+let controller, toastTimer, authGeneration = 0, hydratingUserId = null;
+const syncFlights = new Map();
+const escapeHTML = (value) => String(value).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const number = (value, decimals = 2) => Number.isFinite(value) ? value.toLocaleString(undefined, { maximumFractionDigits: decimals, minimumFractionDigits: decimals }) : '—';
+const money = (value) => { try { return new Intl.NumberFormat(undefined, { style: 'currency', currency: state.quote?.currency || 'USD' }).format(value); } catch { return number(value); } };
+const signed = (value) => `${value >= 0 ? '+' : ''}${number(value)}%`;
+function toast(message) { $('#toast').textContent = message; $('#toast').hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { $('#toast').hidden = true; }, 4500); }
+function storageKey() { return `predictData:${state.user?.id || 'guest'}`; }
+function persist() { return writeLocal(storageKey(), { favorites: state.favorites, notes: state.notes, pending: state.pending }); }
+function loadLocal() {
+  const saved = readLocal(storageKey(), null);
+  const legacy = !state.user ? readLocal('stockFavorites', []) : [];
+  state.favorites = (Array.isArray(saved?.favorites) ? saved.favorites : Array.isArray(legacy) ? legacy : []).filter(s => typeof s === 'string' && /^[A-Z0-9^][A-Z0-9.\-^=]{0,14}$/.test(s));
+  const notes = saved?.notes || (!state.user ? readLocal('stockDetails', {}) : {});
+  state.notes = notes && typeof notes === 'object' && !Array.isArray(notes) ? notes : {};
+  state.pending = { favorites: saved?.pending?.favorites || {}, notes: saved?.pending?.notes || {} };
 }
 
-async function loadCloudData() {
-  if (!supabaseClient || !authSession?.id) return;
-  const { data: favorites } = await supabaseClient.from('favorites').select('symbol').eq('user_id', authSession.id);
-  if (favorites) { savedFavorites.clear(); favorites.forEach((item) => savedFavorites.add(item.symbol)); }
-  const { data: notes } = await supabaseClient.from('stock_notes').select('symbol,target,alert,note').eq('user_id', authSession.id);
-  if (notes) notes.forEach((item) => { savedDetails[item.symbol] = { target: item.target || '', alert: item.alert || '', note: item.note || '' }; });
-  renderWatchlist(); renderMarketDirectory(); updateDashboard(currentTicker);
+async function syncPending() {
+  const userId = state.user?.id;
+  if (!cloud || !userId || !navigator.onLine || hydratingUserId === userId) return false;
+  if (syncFlights.has(userId)) return syncFlights.get(userId);
+  const run = async () => {
+    let failed = false;
+    for (const kind of ['favorites', 'notes']) {
+      for (const [symbol, value] of Object.entries(state.pending[kind])) {
+        if (state.user?.id !== userId) return false;
+        try {
+          const result = kind === 'favorites'
+            ? value ? await cloud.from('favorites').upsert({ user_id: userId, symbol })
+              : await cloud.from('favorites').delete().eq('user_id', userId).eq('symbol', symbol)
+            : await cloud.from('stock_notes').upsert({ user_id: userId, symbol, ...value });
+          if (result.error) { failed = true; continue; }
+          if (state.user?.id !== userId) return false;
+          // A response for an older edit must never acknowledge a newer edit.
+          if (JSON.stringify(state.pending[kind][symbol]) === JSON.stringify(value)) {
+            delete state.pending[kind][symbol]; persist();
+          }
+        } catch { failed = true; }
+      }
+    }
+    if (state.user?.id === userId && !state.notesDirty) {
+      $('#notesStatus').textContent = state.pending.notes[state.symbol]
+        ? 'Pending cloud sync; retrying automatically' : 'Saved and synced';
+    }
+    return !failed;
+  };
+  const promise = run().finally(() => syncFlights.delete(userId));
+  syncFlights.set(userId, promise);
+  return promise;
 }
-
-async function saveCloudFavorite(ticker, isFavorite) {
-  if (!supabaseClient || !authSession?.id) return;
-  if (isFavorite) await supabaseClient.from('favorites').upsert({ user_id: authSession.id, symbol: ticker });
-  else await supabaseClient.from('favorites').delete().eq('user_id', authSession.id).eq('symbol', ticker);
+function setView(view) {
+  state.view = view;
+  const labels = { overview: 'Overview', markets: 'Markets', analytics: 'Analytics', models: 'Model evaluation', watchlist: 'Watchlist' };
+  $('#breadcrumb').textContent = labels[view];
+  document.querySelectorAll('[data-view]').forEach(button => { button.classList.toggle('active', button.dataset.view === view); button.setAttribute('aria-current', button.dataset.view === view ? 'page' : 'false'); });
+  $('#marketSection').hidden = view !== 'markets';
+  $('#watchlistSection').hidden = view !== 'watchlist';
+  $('#research').hidden = !state.quote || ['markets', 'watchlist'].includes(view);
+  $('#chartSection').hidden = view === 'models';
+  $('#analyticsSection').hidden = view === 'models';
+  $('#modelSection').hidden = view === 'analytics';
+  $('#bottomSection').hidden = view !== 'overview';
 }
-
-function updateAuthUI() {
-  const button = $('#authButton');
-  const displayName = authSession?.name || 'Investor';
-  button.textContent = authSession ? `Hi, ${displayName}` : 'Sign in';
-  button.classList.toggle('signed-in', Boolean(authSession));
-  const profileName = document.querySelector('.profile strong');
-  if (profileName) profileName.textContent = authSession ? displayName : 'Alex Smith';
+function renderMarkets() {
+  const filter = $('#marketFilter').value.toLowerCase();
+  const card = (market) => `<button class="rounded-xl border border-line p-4 text-left transition hover:border-green hover:bg-paper" data-symbol="${escapeHTML(market.symbol)}"><span class="flex justify-between font-semibold">${escapeHTML(market.symbol)} <span class="text-green">↗</span></span><span class="mt-2 block text-sm">${escapeHTML(market.name)}</span><span class="mt-1 block text-xs text-muted">${escapeHTML(market.sector || 'Saved ticker')} · Open analysis</span></button>`;
+  $('#marketGrid').innerHTML = state.markets.filter(m => `${m.symbol} ${m.name} ${m.sector}`.toLowerCase().includes(filter)).map(card).join('') || '<p class="text-sm text-muted">No matching markets.</p>';
+  $('#watchlistGrid').innerHTML = state.favorites.map(symbol => card(state.markets.find(m => m.symbol === symbol) || { symbol, name: symbol })).join('') || '<p class="py-5 text-sm text-muted">Your watchlist is empty. Analyze a ticker and select the star to save it.</p>';
+  $('#favoriteCount').textContent = state.favorites.length;
+  document.querySelectorAll('[data-symbol]').forEach(button => button.addEventListener('click', () => { setView('overview'); loadQuote(button.dataset.symbol); }));
 }
-
-function setAuthMode(mode) {
-  const register = mode === 'register';
-  document.querySelectorAll('.auth-tab').forEach((tab) => tab.classList.toggle('active', tab.dataset.authMode === mode));
-  document.querySelector('.register-field').hidden = !register;
-  $('#authTitle').textContent = register ? 'Create your workspace' : 'Welcome back';
-  $('#authSubmit').textContent = register ? 'Create account' : 'Sign in';
-  $('#authPassword').setAttribute('autocomplete', register ? 'new-password' : 'current-password');
-  $('#authError').textContent = '';
+async function loadQuote(symbol = state.symbol) {
+  symbol = symbol.trim().toUpperCase();
+  if (!/^[A-Z0-9^][A-Z0-9.\-^=]{0,14}$/.test(symbol)) { toast('Enter a valid ticker, such as NVDA or BRK-B.'); return; }
+  if (state.notesDirty) { toast('Save your research notes before refreshing or changing ticker.'); $('#dataMode').value = state.demo ? 'demo' : 'live'; return; }
+  controller?.abort(); controller = new AbortController();
+  resetTrajectoryEditor();
+  const requestId = ++state.request;
+  state.symbol = symbol; state.quote = null;
+  $('#tickerInput').value = symbol; $('#research').hidden = true; $('#exportButton').disabled = true;
+  $('#loading').hidden = false; $('#errorBanner').hidden = true; $('#demoBanner').hidden = !state.demo;
+  $('#feedStatus').textContent = 'Fetching data…';
+  try {
+    const response = await fetch(`/api/quote?symbol=${encodeURIComponent(symbol)}${state.demo ? '&demo=1' : ''}`, { signal: controller.signal });
+    const quote = await response.json();
+    if (!response.ok) throw new Error(quote.error || 'Unable to load market data.');
+    if (requestId !== state.request) return;
+    state.quote = quote;
+    renderQuote(); setView(state.view); $('#exportButton').disabled = false;
+    $('#feedStatus').textContent = `${quote.demo ? 'Synthetic demo' : 'Market quote'} · ${new Date(quote.as_of * 1000).toLocaleString()}${quote.cached ? ' · cached' : ''}`;
+    if (quote.stale) {
+      $('#feedStatus').textContent = `Stale quote · ${new Date(quote.as_of * 1000).toLocaleString()}`;
+      $('#errorBanner').textContent = quote.warning;
+      $('#errorBanner').hidden = false;
+    }
+    checkAlert();
+  } catch (error) {
+    if (error.name === 'AbortError' || requestId !== state.request) return;
+    $('#errorBanner').textContent = error.message || 'Unable to connect to the Python server.';
+    $('#errorBanner').hidden = false; $('#feedStatus').textContent = 'Data unavailable';
+  } finally { if (requestId === state.request) $('#loading').hidden = true; }
 }
-
-async function openAuth() {
-  if (authSession) { if (supabaseClient) await supabaseClient.auth.signOut(); authSession = null; localStorage.removeItem('predictSession'); updateAuthUI(); showToast('Signed out'); return; }
-  $('#authBackdrop').hidden = false; $('#authEmail').focus();
+function renderQuote() {
+  const q = state.quote, a = q.analytics;
+  $('#stockSymbol').textContent = q.symbol;
+  $('#stockName').textContent = state.markets.find(m => m.symbol === q.symbol)?.name || q.symbol;
+  $('#stockPrice').textContent = money(q.price);
+  $('#stockChange').textContent = `${q.change >= 0 ? '+' : '−'}${money(Math.abs(q.change))} (${signed(q.percent)}) vs. previous session`;
+  $('#stockChange').className = `mt-2 text-xs ${q.change >= 0 ? 'text-green' : 'text-red-700'}`;
+  $('#forecastPrice').textContent = money(a.forecasts[1].expected); $('#trend').textContent = a.signal;
+  $('#coverage').textContent = `${a.observations} sessions`; $('#historyDate').textContent = `Through ${q.bars.at(-1).date}`;
+  $('#historyBasis').textContent = `${q.history_basis} · ${q.currency} · ${q.source}`;
+  const metrics = [
+    ['Period return', signed(a.period_return), `${q.bars[0].date} to ${q.bars.at(-1).date}`],
+    ['Annualized volatility', `${number(a.volatility)}%`, 'Daily return deviation × √252'],
+    ['Maximum drawdown', `${number(a.max_drawdown)}%`, 'Largest peak-to-trough loss in history'],
+    ['RSI · 14 sessions', number(a.rsi, 1), 'Simple average gains / losses; 0–100'],
+    ['20-session average', money(a.sma20), 'Short-term average closing price'],
+    ['50-session average', money(a.sma50), 'Medium-term average closing price'],
+    ['Average daily volume', number(a.average_volume, 0), `${a.volume_observations} valid volume observations in last 20 sessions`],
+    ['7-session model MAE', money(a.backtests[1].mae), 'Historical average absolute forecast error']
+  ];
+  $('#analyticsGrid').innerHTML = metrics.map(([label, value, detail]) => `<article class="panel p-5"><h3 class="text-xs text-muted">${escapeHTML(label)}</h3><p class="mt-4 font-mono text-2xl">${escapeHTML(value)}</p><p class="mt-3 text-xs leading-5 text-muted">${escapeHTML(detail)}</p></article>`).join('');
+  $('#modelDescription').textContent = `${a.model}. ${a.methodology}`;
+  $('#backtestRows').innerHTML = a.backtests.map(b => `<tr><td>${b.horizon} session${b.horizon > 1 ? 's' : ''}</td><td>${money(b.mae)}</td><td>${money(b.baseline_mae)}</td><td>${number(b.directional_accuracy, 1)}%</td><td>${b.samples}</td><td>${money(b.rmse)}</td><td>${number(b.mape, 1)}%</td><td>${number(b.interval_coverage, 1)}%</td><td class="${b.mae < b.baseline_mae ? 'text-green' : 'text-amber-800'}">${b.mae < b.baseline_mae ? 'Lower error' : b.mae === b.baseline_mae ? 'Equal error' : 'Higher error'}</td></tr>`).join('');
+  $('#forecastRows').innerHTML = a.forecasts.map(f => `<tr><td>${f.horizon} session${f.horizon > 1 ? 's' : ''}</td><td class="font-mono">${money(f.expected)}</td><td class="text-muted">${money(f.lower)} – ${money(f.upper)}</td></tr>`).join('');
+  renderPersonal(); drawChart();
 }
-
-async function refreshMarketData() {
-  const symbols = Object.keys(stockData);
-  const results = await Promise.allSettled(symbols.map(async (symbol) => {
-    const response = await fetch(`/api/quote?symbol=${symbol}`);
-    if (!response.ok) throw new Error('Quote unavailable');
-    return response.json();
-  }));
-  let updated = 0;
-  results.forEach((result, index) => {
-    if (result.status !== 'fulfilled' || !Number.isFinite(result.value.price)) return;
-    const data = stockData[symbols[index]];
-    if (!data.forecastRatio) data.forecastRatio = data.forecast / data.price;
-    data.price = result.value.price;
-    data.change = `${result.value.change >= 0 ? '+' : '−'}$${Math.abs(result.value.change).toFixed(2)}`;
-    data.percent = `(${result.value.percent >= 0 ? '+' : '−'}${Math.abs(result.value.percent).toFixed(2)}%)`;
-    data.forecast = data.price * data.forecastRatio;
-    data.liveCloses = result.value.closes.filter(Number.isFinite);
-    updated += 1;
-  });
-  if (updated) {
-    renderMarketDirectory(); renderWatchlist(); updateDashboard(currentTicker);
-    if (!$('.stock-detail').hidden) openStockDetail(currentTicker);
-    $('.last-sync').textContent = `Last synced just now · ${updated}/${symbols.length} markets`;
-    $('#quoteStatus').textContent = `Live quote · updated ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-  } else {
-    $('#quoteStatus').textContent = 'Live feed unavailable · last known quote';
-  }
-  return updated;
-}
-
-function makeSeries(data, range) {
-  const count = range === '1Y' ? 48 : range === '3M' ? 32 : range === '1M' ? 22 : 12;
-  if (data.liveCloses && data.liveCloses.length >= 2) {
-    const history = data.liveCloses.slice(-count);
-    history[history.length - 1] = data.price;
-    const future = [data.price];
-    for (let i = 1; i <= 7; i += 1) future.push(data.price + (data.forecast - data.price) * (i / 7));
-    return { history, future };
-  }
-  const history = [];
-  let value = data.price * (range === '1Y' ? 0.62 : range === '3M' ? 0.78 : range === '1M' ? 0.9 : 0.95);
-  for (let i = 0; i < count; i += 1) {
-    const wave = Math.sin((i + data.seed) * 0.8) * data.price * 0.012;
-    const trend = (data.price - value) / (count - i + 1) * 0.72;
-    value += trend + wave;
-    history.push(value);
-  }
-  history[history.length - 1] = data.price;
-  const future = [data.price];
-  for (let i = 1; i <= 7; i += 1) future.push(data.price + (data.forecast - data.price) * (i / 7) + Math.sin(i * 1.4 + data.seed) * data.price * 0.005);
-  return { history, future };
+function renderPersonal() {
+  const saved = state.favorites.includes(state.symbol);
+  $('#favoriteButton').textContent = saved ? '★' : '☆';
+  $('#favoriteButton').setAttribute('aria-label', saved ? 'Remove from watchlist' : 'Add to watchlist');
+  $('#favoriteButton').setAttribute('aria-pressed', String(saved));
+  if (state.notesDirty) return;
+  const notes = state.notes[state.symbol] || {};
+  $('#targetPrice').value = notes.target ?? ''; $('#alertPrice').value = notes.alert ?? ''; $('#noteText').value = notes.note || '';
+  $('#notesStatus').textContent = state.user
+    ? state.pending.notes[state.symbol] ? 'Pending cloud sync' : 'Cloud sync enabled'
+    : 'Saved on this device';
 }
 function drawChart() {
-  const svg = $('#priceChart');
-  const data = stockData[currentTicker];
-  const series = makeSeries(data, currentRange);
-  const all = [...series.history, ...series.future];
-  const min = Math.min(...all) * 0.975;
-  const max = Math.max(...all) * 1.025;
-  const width = 900; const height = 360; const left = 32; const right = 8; const top = 18; const bottom = 19;
-  const x = (index) => left + index * ((width - left - right) / (all.length - 1));
-  const y = (value) => top + (max - value) * ((height - top - bottom) / (max - min));
-  const actual = series.history.map((value, i) => `${x(i)},${y(value)}`).join(' ');
-  const forecast = series.future.map((value, i) => `${x(series.history.length - 1 + i)},${y(value)}`).join(' ');
-  const bandTop = series.future.map((value, i) => `${x(series.history.length - 1 + i)},${y(value + data.price * 0.018 * i)}`).join(' ');
-  const bandBottom = [...series.future].reverse().map((value, reverseIndex) => { const i = series.future.length - 1 - reverseIndex; return `${x(series.history.length - 1 + i)},${y(value - data.price * 0.018 * i)}`; }).join(' ');
-  const grid = [0, 1, 2, 3, 4].map((line) => { const value = min + (max - min) * (line / 4); const yy = y(value); return `<line x1="${left}" x2="${width}" y1="${yy}" y2="${yy}" class="grid-line"/><text x="0" y="${yy + 3}" class="axis-label">$${Math.round(value)}</text>`; }).join('');
-  const split = x(series.history.length - 1);
-  svg.innerHTML = `${grid}<rect x="${split}" y="${top}" width="${width - split}" height="${height - top - bottom}" class="forecast-zone"/><line x1="${split}" x2="${split}" y1="${top}" y2="${height - bottom}" class="split-line"/><polygon points="${bandTop} ${bandBottom}" class="confidence-area"/><polyline points="${actual}" class="actual-line"/><polyline points="${forecast}" class="forecast-line"/><circle cx="${split}" cy="${y(data.price)}" r="4.5" class="current-point"/><circle cx="${x(all.length - 1)}" cy="${y(series.future.at(-1))}" r="4" class="future-point"/>`;
+  if (!state.quote) return;
+  const history = state.quote.bars.slice(-state.range), trajectory = state.quote.analytics.trajectory;
+  const last = history.at(-1).close;
+  const future = [{ expected: last, lower: last, upper: last }, ...trajectory.map((forecast, index) => {
+    const expected = last + (forecast.expected - last) * (1 + state.trajectoryTilt / 100);
+    const lower = expected - (expected - forecast.lower) * state.trajectoryBand / 100;
+    const upper = expected + (forecast.upper - expected) * state.trajectoryBand / 100;
+    return { expected, lower, upper, index };
+  })];
+  const values = [...history.map(b => b.close), ...future.flatMap(f => [f.lower, f.upper])];
+  let min = Math.min(...values), max = Math.max(...values); const margin = (max - min) * 0.08 || max * 0.05;
+  min -= margin; max += margin;
+  const x = i => 70 + i * 900 / (history.length - 1 + trajectory.length);
+  const y = value => 20 + (max - value) / (max - min) * 275;
+  const point = (i, value) => `${x(i).toFixed(2)},${y(value).toFixed(2)}`;
+  const split = history.length - 1;
+  const actual = history.map((b, i) => point(i, b.close)).join(' ');
+  const prediction = future.map((f, i) => point(split + i, f.expected)).join(' ');
+  const band = [...future.map((f, i) => point(split + i, f.upper)), ...future.map((f, i) => point(split + i, f.lower)).reverse()].join(' ');
+  const grid = Array.from({ length: 5 }, (_, i) => { const value = min + (max - min) * i / 4; return `<line x1="70" x2="970" y1="${y(value)}" y2="${y(value)}" stroke="#e8ede7"/><text x="60" y="${y(value) + 4}" text-anchor="end" fill="#68776f" font-size="11">${number(value, 0)}</text>`; }).join('');
+  $('#priceChart').innerHTML = `<title>${escapeHTML(state.symbol)} historical closes and 30-session forecast</title>${grid}<polygon points="${band}" fill="#cf894e" opacity=".13"/><line x1="${x(split)}" x2="${x(split)}" y1="20" y2="295" stroke="#9cad9f" stroke-dasharray="4 5"/><polyline points="${actual}" fill="none" stroke="#18745d" stroke-width="2.5"/><polyline points="${prediction}" fill="none" stroke="#cf894e" stroke-width="2.5" stroke-dasharray="5 5"/><circle cx="${x(split)}" cy="${y(last)}" r="4" fill="#18745d"/><text x="70" y="325" fill="#68776f" font-size="11">${history[0].date}</text><text x="${x(split) - 5}" y="325" text-anchor="end" fill="#68776f" font-size="11">${history.at(-1).date}</text><text x="970" y="325" text-anchor="end" fill="#68776f" font-size="11">+30 sessions</text>`;
 }
-function formatMoney(value) {
-  return `$${value.toFixed(2)}`;
+function resetTrajectoryEditor() {
+  state.trajectoryTilt = 0; state.trajectoryBand = 100;
+  if (!$('#trajectoryTilt')) return;
+  $('#trajectoryTilt').value = '0'; $('#trajectoryBand').value = '100';
+  $('#trajectoryTiltValue').textContent = '0%'; $('#trajectoryBandValue').textContent = '100%';
 }
-
-function updateForecastCheckpoints(data) {
-  const horizons = [
-    { expected: data.price + (data.forecast - data.price) * 0.2, spread: 0.012, probability: 91 },
-    { expected: data.forecast, spread: 0.038, probability: Math.round(data.confidence) },
-    { expected: data.price + (data.forecast - data.price) * 1.8, spread: 0.08, probability: 74 }
-  ];
-  const rows = [
-    ['tomorrowExpected', 'tomorrowRange', 'tomorrowProbability'],
-    ['sevenDayExpected', 'sevenDayRange', 'sevenDayProbability'],
-    ['thirtyDayExpected', 'thirtyDayRange', 'thirtyDayProbability']
-  ];
-  horizons.forEach((horizon, index) => {
-    const low = horizon.expected * (1 - horizon.spread);
-    const high = horizon.expected * (1 + horizon.spread);
-    const [expectedId, rangeId, probabilityId] = rows[index];
-    $(`#${expectedId}`).textContent = formatMoney(horizon.expected);
-    $(`#${rangeId}`).textContent = `${formatMoney(low)} — ${formatMoney(high)}`;
-    $(`#${probabilityId}`).style.width = `${horizon.probability}%`;
-    $(`#${probabilityId}`).parentElement.lastChild.textContent = `${horizon.probability}%`;
-  });
-}
-
-function renderWatchlist() {
-  const symbols = [...savedFavorites];
-  $('#favoritesCount').textContent = savedFavorites.size;
-  if (!symbols.length) {
-    $('#watchlistRows').innerHTML = '<div class="watchlist-empty"><span>☆</span><b>Your Watchlist is empty</b><small>Add a stock from Markets to follow its prediction.</small></div>';
-    return;
-  }
-  $('#watchlistRows').innerHTML = symbols.map((symbol) => {
-    const data = stockData[symbol];
-    const isDown = data.change.includes('−');
-    return `<button class="watch-row" data-watch-ticker="${symbol}" type="button"><span class="mini-icon" style="background:${data.color}">${data.icon}</span><span><b>${data.name.replace(' Corporation', '').replace(' Inc.', '')}</b><small>${symbol}</small></span><strong>${formatMoney(data.price)}</strong><span class="${isDown ? 'negative' : 'positive'}">${data.percent}</span></button>`;
-  }).join('');
-  document.querySelectorAll('[data-watch-ticker]').forEach((row) => row.addEventListener('click', () => openStockDetail(row.dataset.watchTicker)));
-}
-
-function renderMarketDirectory() {
-  $('#marketCount').textContent = `${Object.keys(stockData).length} symbols`;
-  $('#marketDirectory').innerHTML = Object.entries(stockData).map(([symbol, data]) => {
-    const isFavorite = savedFavorites.has(symbol);
-    const isDown = data.change.includes('−');
-    return `<article class="market-card"><button class="market-card-main" data-market-ticker="${symbol}" type="button"><span class="market-logo" style="background:${data.color}">${data.icon}</span><span class="market-card-name"><b>${data.name}</b><small>${symbol} · ${data.meta.split('· ')[1]}</small></span><strong>${formatMoney(data.price)}</strong><span class="${isDown ? 'negative' : 'positive'}">${data.percent}</span></button><button class="market-favorite ${isFavorite ? 'saved' : ''}" data-market-favorite="${symbol}" type="button" aria-label="${isFavorite ? 'Remove' : 'Add'} ${symbol} ${isFavorite ? 'from' : 'to'} Watchlist" title="${isFavorite ? 'Remove from Watchlist' : 'Add to Watchlist'}">${isFavorite ? '✓' : '+'}</button></article>`;
-  }).join('');
-  document.querySelectorAll('[data-market-ticker]').forEach((button) => button.addEventListener('click', () => openStockDetail(button.dataset.marketTicker)));
-  document.querySelectorAll('[data-market-favorite]').forEach((button) => button.addEventListener('click', () => toggleFavorite(button.dataset.marketFavorite)));
-}
-
-async function toggleFavorite(ticker) {
-  const saved = savedFavorites.has(ticker);
-  if (saved) savedFavorites.delete(ticker); else savedFavorites.add(ticker);
-  localStorage.setItem('stockFavorites', JSON.stringify([...savedFavorites]));
-  await saveCloudFavorite(ticker, !saved);
-  renderWatchlist(); renderMarketDirectory(); updateDashboard(currentTicker);
-  if (!$('.stock-detail').hidden && ticker === currentTicker) { const favorite = savedFavorites.has(ticker); $('#detailFavorite').textContent = favorite ? '★ Saved to Watchlist' : '☆ Add to Watchlist'; $('#detailFavorite').classList.toggle('saved', favorite); }
-  showToast(saved ? `${ticker} removed from favorites` : `${ticker} added to favorites`);
-}
-
-function openStockDetail(ticker) {
-  const data = stockData[ticker];
-  currentTicker = ticker;
-  window.clearInterval(detailTimer);
-  livePrice = stockData[ticker].price;
-  updateDashboard(ticker);
-  setPageView('Detail');
-  $('.stock-detail').hidden = false;
-  $('.breadcrumb strong').textContent = `${ticker} detail`;
-  $('#detailLogo').textContent = data.icon; $('#detailLogo').style.background = data.color;
-  $('#detailName').textContent = data.name; $('#detailMeta').textContent = data.meta;
-  $('#detailPrice').textContent = formatMoney(data.price); $('#detailChange').textContent = `${data.change} ${data.percent}`;
-  $('#detailForecast').textContent = formatMoney(data.forecast); $('#detailConfidence').textContent = `${data.confidence}%`;
-  $('#detailSignal').textContent = data.note; $('#detailMomentum').textContent = data.signal === 'BULLISH' ? 'Strong' : 'Mixed'; $('#detailRisk').textContent = data.confidence > 80 ? 'Low' : 'Medium';
-  $('#targetPrice').value = savedDetails[ticker]?.target || ''; $('#alertPrice').value = savedDetails[ticker]?.alert || ''; $('#reviewNote').value = savedDetails[ticker]?.note || '';
-  const favorite = savedFavorites.has(ticker); $('#detailFavorite').textContent = favorite ? '★ Saved to Watchlist' : '☆ Add to Watchlist'; $('#detailFavorite').classList.toggle('saved', favorite);
-  drawDetailChart(data); window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function closeStockDetail() {
-  window.clearInterval(detailTimer); $('.stock-detail').hidden = true; setPageView('Markets');
-}
-
-function updateLiveDetail(data) {
-  livePrice = data.price;
-  const tickPercent = ((livePrice / data.price - 1) * 100).toFixed(2);
-  $('#detailPrice').textContent = formatMoney(livePrice);
-  $('#detailTick').textContent = `${tickPercent >= 0 ? '+' : ''}${tickPercent}%`;
-  $('#detailTick').className = tickPercent >= 0 ? 'positive' : 'negative';
-  $('#detailStatus').textContent = 'Live quote feed';
-  drawDetailChart(data);
-}
-
-function setPageView(view) {
-  const groups = {
-    Overview: ['.page-heading', '.toolbar', '.market-overview', '.dashboard-grid', '.bottom-grid'],
-    Markets: ['.toolbar', '.markets-panel'],
-    Watchlist: ['.bottom-grid'],
-    Models: ['.dashboard-grid'],
-    Reports: ['.bottom-grid']
-  };
-  document.querySelector('.main-content').dataset.pageView = view;
-  ['.page-heading', '.toolbar', '.market-overview', '.dashboard-grid', '.bottom-grid', '.markets-panel', '.stock-detail'].forEach((selector) => { const element = $(selector); if (element) element.hidden = true; });
-  $('.forecast-panel').hidden = false; $('.watchlist-panel').hidden = false; $('.chart-panel').hidden = false;
-  (groups[view] || groups.Overview).forEach((selector) => { const element = $(selector); if (element) element.hidden = false; });
-  if (view === 'Watchlist') { $('.forecast-panel').hidden = true; $('.watchlist-panel').hidden = false; }
-  if (view === 'Models') $('.chart-panel').hidden = true;
-  if (view === 'Reports') $('.watchlist-panel').hidden = true;
-  window.scrollTo({ top: 0, behavior: 'auto' });
-}
-
-function drawDetailChart(data) {
-  const series = makeSeries(data, currentRange); series.history[series.history.length - 1] = livePrice || data.price; const values = [...series.history, ...series.future]; const low = Math.min(...values) * .98; const high = Math.max(...values) * 1.02; const points = values.map((value, index) => `${index * (880 / (values.length - 1)) + 10},${280 - ((value - low) / (high - low)) * 250}`).join(' '); const split = series.history.length * (880 / (values.length - 1)) + 10;
-  $('#detailChart').innerHTML = `<line x1="10" x2="890" y1="55" y2="55" class="grid-line"/><line x1="10" x2="890" y1="155" y2="155" class="grid-line"/><line x1="10" x2="890" y1="255" y2="255" class="grid-line"/><line x1="${split}" x2="${split}" y1="18" y2="280" class="split-line"/><polyline points="${points}" class="actual-line live-line"/><circle cx="${split}" cy="${280 - (((livePrice || data.price) - low) / (high - low)) * 250}" r="5" class="current-point"/>`;
-}
-
-function updateDashboard(ticker) {
-  const data = stockData[ticker]; currentTicker = ticker;
-  $('#companyName').textContent = data.name; $('#companyMeta').textContent = data.meta;
-  $('#currentPrice').textContent = `$${data.price.toFixed(2)}`; $('#dailyChange').innerHTML = `${data.change} <small>${data.percent}</small>`;
-  $('#dailyChange').className = `change ${data.signal === 'NEUTRAL' ? 'negative' : 'positive'}`;
-  $('#forecastValue').textContent = `$${data.forecast.toFixed(2)}`;
-  $('#forecastChange').textContent = `${data.forecast > data.price ? '+' : ''}${((data.forecast / data.price - 1) * 100).toFixed(1)}% expected`;
-  $('#signal').textContent = data.signal; $('#signal').className = `signal ${data.signal === 'NEUTRAL' ? 'negative' : 'positive'}`;
-  $('#signal').nextElementSibling.textContent = data.note; $('#confidenceValue').textContent = `${data.confidence}%`; $('#confidenceBar').style.width = `${data.confidence}%`;
-  $('#chartTooltip strong').textContent = formatMoney(data.price);
-  const favoriteButton = $('#favoriteButton'); const isFavorite = savedFavorites.has(ticker);
-  favoriteButton.textContent = isFavorite ? '★' : '☆'; favoriteButton.classList.toggle('saved', isFavorite); favoriteButton.setAttribute('aria-label', isFavorite ? 'Remove stock from favorites' : 'Add stock to favorites');
-  updateForecastCheckpoints(data);
-  $('.symbol-icon').textContent = data.icon; $('.symbol-icon').style.background = data.color; $('#tickerInput').value = ticker;
-  document.querySelectorAll('.ticker-chip').forEach((button) => button.classList.toggle('selected', button.dataset.ticker === ticker));
+function updateTrajectoryEditor() {
+  state.trajectoryTilt = Number($('#trajectoryTilt').value); state.trajectoryBand = Number($('#trajectoryBand').value);
+  $('#trajectoryTiltValue').textContent = `${state.trajectoryTilt > 0 ? '+' : ''}${state.trajectoryTilt}%`;
+  $('#trajectoryBandValue').textContent = `${state.trajectoryBand}%`;
   drawChart();
 }
-
-document.querySelectorAll('.ticker-chip').forEach((button) => button.addEventListener('click', () => updateDashboard(button.dataset.ticker)));
-document.querySelectorAll('.range').forEach((button) => button.addEventListener('click', () => { currentRange = button.dataset.range; document.querySelectorAll('.range').forEach((item) => item.classList.remove('active')); button.classList.add('active'); drawChart(); }));
-$('#tickerInput').addEventListener('keydown', (event) => { if (event.key === 'Enter') { const ticker = $('#tickerInput').value.trim().toUpperCase(); if (stockData[ticker]) updateDashboard(ticker); else $('#tickerInput').value = currentTicker; } });
-document.querySelectorAll('.nav-item').forEach((item) => item.addEventListener('click', () => {
-  document.querySelectorAll('.nav-item').forEach((nav) => nav.classList.remove('active'));
-  item.classList.add('active');
-  $('.breadcrumb strong').textContent = item.dataset.view;
-  setPageView(item.dataset.view);
-  showToast(`${item.dataset.view} view opened`);
-}));
-function showToast(message) {
-  const toast = $('#toast'); toast.textContent = message; toast.classList.add('visible');
-  window.clearTimeout(showToast.timer); showToast.timer = window.setTimeout(() => toast.classList.remove('visible'), 2600);
+async function toggleFavorite() {
+  const symbol = state.symbol, user = state.user;
+  const saved = state.favorites.includes(symbol);
+  state.favorites = saved ? state.favorites.filter(s => s !== symbol) : [...state.favorites, symbol];
+  if (user) state.pending.favorites[symbol] = !saved;
+  persist(); renderMarkets(); renderPersonal();
+  if (cloud && user) {
+    if (!await syncPending()) toast('Cloud sync pending. Your changes will retry automatically.');
+  }
 }
-$('#filterButton').addEventListener('click', () => { const active = $('#filterButton').classList.toggle('active'); $('#filterButton').setAttribute('aria-expanded', active); showToast(active ? 'Showing high-confidence signals' : 'Showing all signals'); });
-$('#refreshButton').addEventListener('click', async () => { const button = $('#refreshButton'); button.classList.add('spinning'); const updated = await refreshMarketData(); $('.last-sync').textContent = updated ? `Last synced just now · ${updated}/${Object.keys(stockData).length} markets` : 'Live data unavailable · showing last known prices'; window.setTimeout(() => button.classList.remove('spinning'), 500); showToast(updated ? 'All market prices refreshed' : 'Using last known market prices'); });
-$('#detailsButton').addEventListener('click', () => { const panel = $('.insight-panel'); const expanded = panel.classList.toggle('details-open'); $('#detailsButton').textContent = expanded ? 'Hide details ↑' : 'Details ↗'; showToast(expanded ? 'Full model breakdown shown' : 'Model breakdown collapsed'); });
-$('#favoriteButton').addEventListener('click', () => toggleFavorite(currentTicker));
-$('#backToMarkets').addEventListener('click', closeStockDetail);
-$('#detailFavorite').addEventListener('click', () => toggleFavorite(currentTicker));
-$('#detailRefresh').addEventListener('click', async () => { await refreshMarketData(); drawDetailChart(stockData[currentTicker]); $('#detailStatus').textContent = 'Refreshed just now'; showToast(`${currentTicker} detail refreshed`); });
-$('#buyAction').addEventListener('click', () => showToast(`Bullish monitor enabled for ${currentTicker}`));
-$('#sellAction').addEventListener('click', () => showToast(`Pullback monitor enabled for ${currentTicker}`));
-$('#saveDetails').addEventListener('click', async () => { savedDetails[currentTicker] = { target: $('#targetPrice').value, alert: $('#alertPrice').value, note: $('#reviewNote').value }; localStorage.setItem('stockDetails', JSON.stringify(savedDetails)); if (supabaseClient && authSession?.id) await supabaseClient.from('stock_notes').upsert({ user_id: authSession.id, symbol: currentTicker, target: $('#targetPrice').value || null, alert: $('#alertPrice').value || null, note: $('#reviewNote').value }); $('#savedMessage').textContent = 'Saved just now'; showToast(`${currentTicker} settings saved`); });
-$('#notificationsButton').addEventListener('click', () => showToast('No new market alerts'));
-$('#authButton').addEventListener('click', openAuth);
-$('#authClose').addEventListener('click', () => { $('#authBackdrop').hidden = true; });
-$('#authBackdrop').addEventListener('click', (event) => { if (event.target === $('#authBackdrop')) $('#authBackdrop').hidden = true; });
-document.querySelectorAll('.auth-tab').forEach((tab) => tab.addEventListener('click', () => setAuthMode(tab.dataset.authMode)));
-$('#authForm').addEventListener('submit', async (event) => { event.preventDefault(); const email = $('#authEmail').value.trim(); const password = $('#authPassword').value; const username = $('#authName').value.trim(); const register = document.querySelector('.auth-tab.active').dataset.authMode === 'register'; if (password.length < 6) { $('#authError').textContent = 'Use a password with at least 6 characters.'; return; } if (register && !username) { $('#authError').textContent = 'Choose a username to continue.'; return; } if (supabaseClient) { const result = register ? await supabaseClient.auth.signUp({ email, password, options: { data: { username } } }) : await supabaseClient.auth.signInWithPassword({ email, password }); if (result.error) { $('#authError').textContent = result.error.message; return; } authSession = { id: result.data.user?.id, email, name: result.data.user?.user_metadata?.username || email.split('@')[0] }; await loadCloudData(); } else { authSession = { email, name: register ? username : email.split('@')[0] }; } localStorage.setItem('predictSession', JSON.stringify(authSession)); updateAuthUI(); $('#authBackdrop').hidden = true; $('#authForm').reset(); setAuthMode('signin'); showToast(register ? 'Account created' : 'Signed in successfully'); });
-$('#viewWatchlistButton').addEventListener('click', () => { document.querySelector('[data-view="Watchlist"]').click(); document.querySelector('.watchlist-panel').scrollIntoView({ behavior: 'smooth', block: 'center' }); showToast('Watchlist opened'); });
-$('#exportButton').addEventListener('click', () => { const report = `Stock Prediction Report\n${stockData[currentTicker].name} (${currentTicker})\nCurrent price: $${stockData[currentTicker].price}\n7-day forecast: $${stockData[currentTicker].forecast}`; const blob = new Blob([report], { type: 'text/plain' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `${currentTicker}-prediction-report.txt`; link.click(); URL.revokeObjectURL(link.href); showToast(`${currentTicker} report downloaded`); });
-updateMarketDate();
-renderWatchlist();
-renderMarketDirectory();
-updateAuthUI();
-setPageView('Overview');
-updateDashboard(currentTicker);
-refreshMarketData();
-marketRefreshTimer = window.setInterval(refreshMarketData, 60000);
-if (supabaseClient) {
-  supabaseClient.auth.getSession().then(async ({ data }) => {
-    if (!data.session?.user) return;
-    authSession = { id: data.session.user.id, email: data.session.user.email, name: data.session.user.user_metadata?.username || data.session.user.email.split('@')[0] };
-    localStorage.setItem('predictSession', JSON.stringify(authSession)); updateAuthUI(); await loadCloudData();
-  });
-  supabaseClient.auth.onAuthStateChange((_event, session) => {
-    if (!session) { authSession = null; localStorage.removeItem('predictSession'); updateAuthUI(); }
-  });
+async function saveNotes(event) {
+  event.preventDefault();
+  const symbol = state.symbol, user = state.user;
+  const detail = { target: $('#targetPrice').value === '' ? null : Number($('#targetPrice').value), alert: $('#alertPrice').value === '' ? null : Number($('#alertPrice').value), note: $('#noteText').value };
+  state.notes[symbol] = detail;
+  if (user) state.pending.notes[symbol] = { ...detail, updated_at: new Date().toISOString() };
+  const stored = persist(); state.notesDirty = !stored;
+  $('#notesStatus').textContent = stored ? 'Saved on this device' : 'Storage failed; keep this page open';
+  if (cloud && user) {
+    await syncPending();
+  }
+  checkAlert();
 }
+function checkAlert() {
+  const value = Number(state.notes[state.symbol]?.alert);
+  if (state.quote && !state.quote.stale && value > 0 && state.quote.price >= value) toast(`${state.quote.demo ? 'Demo: ' : ''}${state.symbol} is at or above your ${money(value)} alert threshold.`);
+}
+async function applySession(session) {
+  const nextUser = session?.user || null;
+  if (state.user?.id === nextUser?.id) return;
+  const generation = ++authGeneration;
+  state.user = nextUser; state.notesDirty = false;
+  hydratingUserId = state.user?.id || null;
+  loadLocal(); renderPersonal(); renderMarkets();
+  $('#authButton').textContent = state.user ? 'Sign out' : 'Sign in';
+  if (!state.user || !cloud) return;
+  const userId = state.user.id;
+  const settled = await Promise.allSettled([
+    cloud.from('favorites').select('symbol').eq('user_id', userId),
+    cloud.from('stock_notes').select('symbol,target,alert,note').eq('user_id', userId)
+  ]);
+  if (generation !== authGeneration) return;
+  hydratingUserId = null;
+  const [favorites, notes] = settled.map(result => result.status === 'fulfilled' ? result.value : { error: true });
+  if (favorites.error || notes.error) { toast('Cloud data unavailable. Showing this account’s local data.'); await syncPending(); return; }
+  const combined = new Set(favorites.data.map(f => f.symbol));
+  for (const [symbol, saved] of Object.entries(state.pending.favorites)) {
+    if (saved) combined.add(symbol); else combined.delete(symbol);
+  }
+  state.favorites = [...combined];
+  state.notes = { ...Object.fromEntries(notes.data.map(n => [n.symbol, n])), ...state.pending.notes };
+  persist(); renderMarkets(); renderPersonal();
+  await syncPending();
+}
+function exportCSV() {
+  if (!state.quote) return;
+  const q = state.quote;
+  const rows = [['symbol', 'source', 'type', 'date_or_horizon', 'close_or_estimate', 'lower', 'upper', 'volume'],
+    ...q.bars.map(b => [q.symbol, q.source, 'history', b.date, b.close, '', '', b.volume]),
+    ...q.analytics.forecasts.map(f => [q.symbol, q.source, 'forecast_sessions', f.horizon, f.expected, f.lower, f.upper, '']),
+    [], ['metric', 'value'], ...Object.entries(q.analytics).filter(([, value]) => typeof value === 'number'),
+    [], ['horizon_sessions', 'model_mae', 'baseline_mae', 'directional_accuracy_percent', 'samples', 'rmse', 'mape_percent', 'coverage_percent', 'evaluation_start', 'evaluation_end'],
+    ...q.analytics.backtests.map(b => [b.horizon, b.mae, b.baseline_mae, b.directional_accuracy, b.samples, b.rmse, b.mape, b.interval_coverage, b.evaluation_start, b.evaluation_end]),
+    [], ['quote_as_of_unix', q.as_of], ['fetched_at_unix', q.fetched_at], ['stale', q.stale], ['model_version', q.analytics.model_version]];
+  const csv = rows.map(row => row.map(value => `"${String(value).replace(/"/g, '""')}"`).join(',')).join('\r\n');
+  const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+  const link = document.createElement('a'); link.href = url; link.download = `${q.symbol}-${q.demo ? 'demo-' : ''}research.csv`; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+document.querySelectorAll('[data-view]').forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
+document.querySelectorAll('[data-range]').forEach(b => b.addEventListener('click', () => { state.range = Number(b.dataset.range); document.querySelectorAll('[data-range]').forEach(r => r.classList.toggle('active', r === b)); drawChart(); }));
+$('#trajectoryTilt').addEventListener('input', updateTrajectoryEditor);
+$('#trajectoryBand').addEventListener('input', updateTrajectoryEditor);
+$('#resetTrajectory').addEventListener('click', () => { resetTrajectoryEditor(); drawChart(); });
+$('#searchForm').addEventListener('submit', event => { event.preventDefault(); setView('overview'); loadQuote($('#tickerInput').value); });
+$('#refreshButton').addEventListener('click', () => loadQuote());
+$('#dataMode').addEventListener('change', () => { if (state.notesDirty) { $('#dataMode').value = state.demo ? 'demo' : 'live'; toast('Save your notes before changing data source.'); return; } state.demo = $('#dataMode').value === 'demo'; loadQuote(); });
+$('#marketFilter').addEventListener('input', renderMarkets);
+$('#favoriteButton').addEventListener('click', toggleFavorite);
+$('#notesForm').addEventListener('submit', saveNotes);
+$('#notesForm').addEventListener('input', () => { state.notesDirty = true; $('#notesStatus').textContent = 'Unsaved changes'; });
+$('#exportButton').addEventListener('click', exportCSV);
+$('#authButton').addEventListener('click', async () => {
+  if (!cloud) { toast('Sign-in is unavailable. Check the Supabase configuration and connection.'); return; }
+  if (state.notesDirty) { toast('Save your notes before changing accounts.'); return; }
+  if (state.user) { const { error } = await cloud.auth.signOut(); if (error) toast(error.message); else await applySession(null); return; }
+  $('#authError').textContent = ''; $('#authDialog').showModal();
+});
+$('#authForm').addEventListener('submit', async event => {
+  event.preventDefault(); const button = event.submitter; button.disabled = true;
+  try {
+    const credentials = { email: $('#authEmail').value, password: $('#authPassword').value };
+    const { data, error } = button.value === 'signup' ? await cloud.auth.signUp(credentials) : await cloud.auth.signInWithPassword(credentials);
+    if (error) throw error;
+    if (data.session) { await applySession(data.session); $('#authDialog').close(); $('#authPassword').value = ''; }
+    else $('#authError').textContent = 'Check your email to confirm your account, then sign in.';
+  } catch (error) { $('#authError').textContent = error.message; }
+  finally { button.disabled = false; }
+});
+async function init() {
+  $('#today').textContent = new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' }).toUpperCase();
+  loadLocal(); renderMarkets();
+  try { const response = await fetch('/api/markets'); if (!response.ok) throw new Error(); state.markets = await response.json(); renderMarkets(); } catch { toast('Market directory unavailable. You can still search a ticker.'); }
+  loadQuote();
+  if (cloud) cloud.auth.onAuthStateChange((_event, session) => { setTimeout(() => applySession(session), 0); });
+  window.addEventListener('online', () => syncPending());
+  window.addEventListener('beforeunload', event => { if (state.notesDirty) { event.preventDefault(); event.returnValue = ''; } });
+  setInterval(() => { if (!document.hidden) { syncPending(); if (!state.notesDirty) loadQuote(); } }, 60000);
+}
+init();

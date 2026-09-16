@@ -4,9 +4,31 @@
   "private": true,
   "description": "Real-time stock market prediction dashboard",
   "scripts": {
-    "start": "node server.js"
+    "start": "python server.py",
+    "build:css": "tailwindcss -i ./src/input.css -o ./styles.css --minify",
+    "watch:css": "tailwindcss -i ./src/input.css -o ./styles.css --watch",
+    "build:crypto": "vite build",
+    "typecheck": "tsc --noEmit",
+    "build": "npm run typecheck && npm run build:crypto && npm run build:css"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@tailwindcss/cli": "^4.1.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "tailwindcss": "^4.1.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=22.12"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "framer-motion": "^13.3.0",
+    "lucide-react": "^1.46.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "tailwind-merge": "^3.7.0"
   }
 }

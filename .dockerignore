@@ -1,0 +1,14 @@
+*
+!Dockerfile
+!requirements.txt
+!server.py
+!analytics.py
+!index.html
+!app.js
+!styles.css
+!supabase-config.js
+!crypto_api.py
+!crypto.html
+!public/
+!public/crypto/
+!public/crypto/dashboard.js

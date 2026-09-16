@@ -1,0 +1,44 @@
+@import "tailwindcss" source(none);
+@source "../index.html";
+@source "../app.js";
+@source "../crypto.html";
+@source "../components/**/*.tsx";
+@source "../demos/**/*.tsx";
+
+@theme {
+  --color-paper: #f5f6f2;
+  --color-forest: #142b26;
+  --color-ink: #20332c;
+  --color-muted: #68776f;
+  --color-line: #dfe5df;
+  --color-green: #18745d;
+  --color-mint: #a1dcc3;
+  --color-orange: #cf894e;
+  --font-sans: "Segoe UI", Arial, sans-serif;
+  --font-mono: "Cascadia Code", Consolas, monospace;
+}
+@layer base {
+  button, a, select { -webkit-tap-highlight-color: transparent; }
+  button { cursor: pointer; }
+  button:disabled { cursor: wait; opacity: .5; }
+  :focus-visible { outline: 3px solid #51a48b; outline-offset: 3px; }
+  [hidden] { display: none !important; }
+  th { padding: 12px 14px 12px 0; font-size: 11px; color: #68776f; font-weight: 500; white-space: nowrap; }
+  td { padding: 16px 14px 16px 0; border-top: 1px solid #dfe5df; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  dialog { margin: auto; }
+  dialog::backdrop { background: #10251ecc; backdrop-filter: blur(4px); }
+}
+@layer components {
+  .panel { @apply rounded-2xl border border-line bg-white; }
+  .eyebrow { @apply text-[10px] font-semibold tracking-[.16em]; }
+  .input { @apply rounded-lg border border-line bg-white px-3 py-2.5 text-sm text-ink; }
+  .button-primary { @apply rounded-lg bg-forest px-4 py-2.5 text-sm font-medium text-white transition hover:bg-green; }
+  .button-secondary { @apply rounded-lg border border-line bg-white px-4 py-2.5 text-sm transition hover:bg-paper; }
+  .nav-button { @apply flex items-center gap-3 rounded-lg px-3 py-3 text-left text-sm text-white/65 transition hover:bg-white/10 hover:text-white; }
+  .nav-button.active { @apply bg-white/10 text-mint; }
+  .range-button { @apply rounded-md px-3 py-1.5 text-xs text-muted; }
+  .range-button.active { @apply bg-white text-green shadow-sm; }
+  .brand-mark { @apply grid h-9 w-9 place-items-center rounded-xl border border-mint/50 text-mint; }
+  .legend-line { @apply mr-2 inline-block h-0.5 w-5 align-middle; }
+  .skip-link { @apply absolute -top-20 left-4 z-50 rounded bg-white p-3 focus:top-4; }
+}
