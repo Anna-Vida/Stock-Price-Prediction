@@ -192,6 +192,11 @@ def crypto_page():
     return send_from_directory(ROOT, "crypto.html")
 
 
+@app.get("/developer")
+def developer_page():
+    return send_from_directory(ROOT, "developer.html")
+
+
 @app.get("/public/crypto/dashboard.js")
 def crypto_bundle():
     return send_from_directory(ROOT / 'public' / 'crypto', 'dashboard.js')

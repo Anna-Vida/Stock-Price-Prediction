@@ -91,6 +91,8 @@ class APITests(unittest.TestCase):
             self.assertEqual(self.client.get('/' + path).status_code, 404)
         with self.client.get('/') as response:
             self.assertEqual(response.status_code, 200)
+        with self.client.get('/developer') as response:
+            self.assertEqual(response.status_code, 200)
 
     def test_provider_failure_never_becomes_demo(self):
         with patch('server.urllib.request.urlopen', side_effect=urllib.error.URLError('unavailable')):

@@ -2,6 +2,7 @@
 @source "../index.html";
 @source "../app.js";
 @source "../crypto.html";
+@source "../developer.html";
 @source "../components/**/*.tsx";
 @source "../demos/**/*.tsx";
 

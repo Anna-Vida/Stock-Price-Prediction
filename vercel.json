@@ -5,6 +5,7 @@
     { "src": "server.py", "use": "@vercel/python" },
     { "src": "index.html", "use": "@vercel/static" },
     { "src": "crypto.html", "use": "@vercel/static" },
+    { "src": "developer.html", "use": "@vercel/static" },
     { "src": "app.js", "use": "@vercel/static" },
     { "src": "styles.css", "use": "@vercel/static" },
     { "src": "supabase-config.js", "use": "@vercel/static" },
