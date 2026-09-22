@@ -126,6 +126,12 @@ Only known public frontend assets are served. Source code, `.git`, and configura
 
 ## Deployment
 
+### Vercel
+
+Vercel deployment URL: [stock-price-prediction-bice.vercel.app](https://stock-price-prediction-bice.vercel.app/).
+
+This Flask application is detected from the top-level `server.py` file. The stock workspace, crypto dashboard, and API are deployed together; no separate frontend deployment is required.
+
 ### Render
 
 Render is the recommended host for the complete application because it runs the Python API and serves the stock and crypto frontend from the same service.
