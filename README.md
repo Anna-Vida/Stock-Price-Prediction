@@ -671,6 +671,31 @@ These decisions keep the UI explicit about what data is real, stale, unavailable
 
 ---
 
+## My Contribution
+
+**Role: Sole Developer / Full-Stack Developer**
+
+I designed and built **Predict independently from end to end**. My contribution covered the stock and cryptocurrency interfaces, Python backend, market-data integrations, statistical analytics, forecasting logic, local/cloud persistence, automated testing, CI, and deployment configuration.
+
+Key areas I implemented include:
+
+- Stock research interface with HTML, JavaScript, and Tailwind CSS
+- React + TypeScript cryptocurrency dashboard
+- Flask + Waitress backend API
+- Yahoo Finance and CoinGecko market-data integrations
+- Statistical forecasting and walk-forward evaluation
+- Risk and technical indicators
+- Caching, stale-data handling, and provider error states
+- Supabase authentication, favorites, notes, and Row Level Security
+- Local-first synchronization behavior
+- Python and Playwright test suites
+- GitHub Actions CI
+- Vercel, Render, and Docker deployment configuration
+
+This project represents my work as the **sole developer responsible for both the frontend and backend implementation**.
+
+---
+
 ## Author
 
 **Anna Patricia B. Vida**
